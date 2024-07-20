@@ -38,4 +38,9 @@ Install PyBash with git clone
 ```git
     git clone https://github.com/Inferno265/PyBash.git
 ```
-    
+
+## Features
+
+- pwd Shows Current Working Directory (cwd)
+- cd Changes Directory to the one specified (cd .. goes to the upper directory)
+
