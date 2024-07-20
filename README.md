@@ -41,7 +41,7 @@ Install PyBash with git clone
 
 ## Features
 
-- pwd Shows Current Working Directory (cwd)
-- cd Changes Directory to the one specified (cd .. goes to the upper directory)
-- exit Exits the program
-- ls Shows files in CWD
+- ```pwd``` Shows Current Working Directory (cwd)
+- ```cd``` Changes Directory to the one specified (cd .. goes to the upper directory)
+- ```exit``` Exits the program
+- ```ls``` Shows files in CWD
