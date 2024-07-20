@@ -1,4 +1,6 @@
 
+![image](https://github.com/Inferno265/PyBash/blob/85aa0b75cada2ade354ac0b7040ab3cee8142ed4/pybash.jpg)
+
 # PyBash
 
 PyBash is a python project to imitate Bash available on Linux and MacOS.
