@@ -45,3 +45,6 @@ Install PyBash with git clone
 - ```cd``` Changes Directory to the one specified (cd .. goes to the upper directory)
 - ```exit``` Exits the program
 - ```ls``` Shows files in CWD
+- ```cat``` Outputs the contents of a file
+- ```touch``` Makes a empty file
+- ```rm``` Deletes a file/folder
