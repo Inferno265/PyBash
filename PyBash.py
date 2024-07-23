@@ -46,7 +46,7 @@ def execute_command(x):
         except Exception as e:
             print(f"Error changing directory: {e}")
     elif x == 'version':
-        print('v1.1.1 Copyright © 2024 Inferno')
+        print('v1.2.0 Copyright © 2024 Inferno')
     elif x.startswith('cat '):
         new_x = x.split(' ')
         try:
