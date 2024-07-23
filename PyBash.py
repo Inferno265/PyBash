@@ -1,14 +1,37 @@
 import os
+import sys
+import ctypes
+import subprocess
+
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except Exception as e:
+        print(f"Error checking admin status: {e}")
+        return False
+
+def run_as_admin(command=None):
+    if is_admin():
+        print("Already running as admin.")
+        return True
+    else:
+        print("Trying to run as admin...")
+        try:
+            script = os.path.abspath(sys.argv[0])
+            params = sys.argv[0]
+            if command:
+                params += f' --command "{command}"'
+            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
+            return True
+        except Exception as e:
+            print(f"Failed to elevate privileges: {e}")
+            return False
 
 def get_modified_cwd():
     cwd = os.getcwd()
     return cwd.replace("C:\\", 'root@' + os.getlogin() + '\\')
 
-os.system('color 0a')
-while True:
-    modified_cwd = get_modified_cwd()
-    x = input(modified_cwd + '~$ ')
-    
+def execute_command(x):
     if x == 'exit':
         os.system('color 0f')
         exit(0)
@@ -50,7 +73,7 @@ while True:
                     try:
                         os.remove(new_x[2])
                     except OSError:
-                        print('Warning! Critical Error. DO NOT ATTEMPT TO DELETE AGAIN. If you are sure to do it, delete it using sudo rm [file].')
+                        print('Warning! Critical Error. DO NOT ATTEMPT TO DELETE AGAIN. If you are sure to do it, delete it using sudo.')
             else:
                 if os.path.exists(new_x[1]):
                     os.remove(new_x[1])
@@ -58,8 +81,14 @@ while True:
                     print('File not found')
         except IndexError:
             print('Usage: rm [-option] [file]')
-    elif x.startswith('sudo '):
-        print('Working on $ sudo!')
-    else: 
-        print("Unknown Command Detected.")
+    elif x == 'sudo':
+        if not is_admin():
+            run_as_admin()
+        else:
+            pass
 
+if __name__ == "__main__":
+    os.system('color 0a')
+    while True:
+        x = input(get_modified_cwd() + "~$ ")
+        execute_command(x)
