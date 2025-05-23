@@ -2,34 +2,15 @@ import os
 import sys
 import ctypes
 import subprocess
-
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except Exception as e:
-        print(f"Error checking admin status: {e}")
-        return False
-
-def run_as_admin(command=None):
-    if is_admin():
-        print("Already running as admin.")
-        return True
-    else:
-        print("Trying to run as admin...")
-        try:
-            script = os.path.abspath(sys.argv[0])
-            params = sys.argv[0]
-            if command:
-                params += f' --command "{command}"'
-            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
-            return True
-        except Exception as e:
-            print(f"Failed to elevate privileges: {e}")
-            return False
+import socket
+from termcolor import colored
 
 def get_modified_cwd():
     cwd = os.getcwd()
-    return cwd.replace("C:\\", 'root@' + os.getlogin() + '\\')
+    cwd1 = colored(os.getlogin() + "@" + socket.gethostname(), 'green') 
+    cwd2 = cwd1 + colored(':', 'white')
+    cwd3 = cwd2 + '\033[1m' + colored('/' + os.getcwd().replace("C:\\", ""), 'blue').replace("\\", "/")
+    return '\033[1m' + cwd3
 
 def execute_command(x):
     if x == 'exit':
@@ -38,7 +19,20 @@ def execute_command(x):
     elif x == 'pwd':
         print(os.getcwd())
     elif x == 'ls':
-        os.system('dir /w')
+        dirs_colored = []
+        files_colored = []
+        for name in os.listdir(os.getcwd()):
+            full_path = os.path.join(os.getcwd(), name)
+            if os.path.isdir(full_path):
+                dirs_colored.append(colored(name, color='black', on_color='on_green'))
+            else:
+                files_colored.append('\033[1m' + colored(name, 'green'))
+
+        items = dirs_colored + files_colored
+        for item in items:
+            print(item, end=" ")
+        print()
+
     elif x.startswith('cd '):
         try:
             new_dir = x[3:].strip()
@@ -46,15 +40,14 @@ def execute_command(x):
         except Exception as e:
             print(f"Error changing directory: {e}")
     elif x == 'version':
-        print('v1.2.0 Copyright © 2024 Inferno')
+        print('v1.3.0 Copyright © 2024 Inferno')
     elif x.startswith('cat '):
         new_x = x.split(' ')
         try:
-            if new_x[1] == '-n':
-                with open(new_x[2]) as file:
-                    print(file.read())
+            with open(new_x[1]) as file:
+                print(file.read())
         except (IndexError, FileNotFoundError):
-            print('Usage: cat [-option] [file to read]')
+            print("Usage: cat [file to read]")
     elif x.startswith('touch '):
         new_x = x.split(' ')
         try:
@@ -72,8 +65,8 @@ def execute_command(x):
                 if new_x[1] == '-f':
                     try:
                         os.remove(new_x[2])
-                    except OSError:
-                        print('Warning! Critical Error. DO NOT ATTEMPT TO DELETE AGAIN. If you are sure to do it, delete it using sudo.')
+                    except OSError as e:
+                        print(f'Critical error! {e.strerror}')
             else:
                 if os.path.exists(new_x[1]):
                     os.remove(new_x[1])
@@ -81,14 +74,9 @@ def execute_command(x):
                     print('File not found')
         except IndexError:
             print('Usage: rm [-option] [file]')
-    elif x == 'sudo':
-        if not is_admin():
-            run_as_admin()
-        else:
-            pass
-
+            
 if __name__ == "__main__":
     os.system('color 0a')
     while True:
-        x = input(get_modified_cwd() + "~$ ")
+        x = input(get_modified_cwd() + "$ ")
         execute_command(x)

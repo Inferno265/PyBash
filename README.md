@@ -48,4 +48,3 @@ Install PyBash with git clone
 - ```cat``` Outputs the contents of a file
 - ```touch``` Makes a empty file
 - ```rm``` Deletes a file/folder
-- ```sudo``` Activates "Admin Mode"
