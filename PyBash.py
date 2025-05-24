@@ -5,6 +5,11 @@ import subprocess
 import socket
 from termcolor import colored
 
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
 def get_modified_cwd():
     cwd = os.getcwd()
     cwd1 = colored(os.getlogin() + "@" + socket.gethostname(), 'green') 
@@ -74,6 +79,16 @@ def execute_command(x):
                     print('File not found')
         except IndexError:
             print('Usage: rm [-option] [file]')
+    elif x == 'sudo':
+        ctypes.windll.shell32.ShellExecuteW(
+                None,
+                "runas",
+                sys.executable,
+                f"{sys.argv[0]}",
+                None,
+                1
+        )
+        sys.exit(0)
             
 if __name__ == "__main__":
     os.system('color 0a')
